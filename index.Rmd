@@ -1,6 +1,6 @@
 ---
-title: " " #replace the title with something short and catchy to represent your project
-subtitle: "____'s Data Science Portfolio" #replace blank with your name
+title: "School Program and Expenditure Effects on Absenteeism  " #replace the title with something short and catchy to represent your project
+subtitle: "Jerusalem's Data Science Portfolio" #replace blank with your name
 output:
   html_document:
     df_print: paged
@@ -9,10 +9,17 @@ output:
 ## Abstract
 
 In under 250 words give a brief summary of the project so far.
+I have downloaded national civil rights data for the year of 2013- 2014. The dataset was quite large and included a lot of columns with empty entries, so to start I decided to both minimize the number of columns to observe as well as the names used to describe them as they were quite cryptic. The minimized dataset includes state, district, school name, student enrollments seperated by race, salary expenditures, presence of gifted programs and male/female chronic absenteeism.  From there I thought it would be a good idea to create a school_table to organize them in general terms regarding its name, location, enrollment, salary expenditure, and presence of gifted programs. I then decided to create a student_enrollment_table, this table is organized to hold the enrollment of students both separated by race and gender. The table would also include male and female totals and all enrollment stats are organized per school district. Lastly I created a gifted_education table in order to observe any effects the presence of these programs may have on chronic absenteeism. After organizing a school, enrollment, and programs table I decided to make a scatter plot which would help visualize any relation between chronic absenteeism and salary expenditures. Next I set up some graphs to summarize the frequency of schools by state, another graph showing expenditures separated by state, and then a graph showing the prominence of absenteeism seperated by state.
+
+
+
+
+
 
 ### 1. Discovery and Data Preparation
 
-Provide a one-sentence introduction with what is covered by the first deliverable along with a link to another html page that gives the details.
+The first deliverable will include the beginning data discovery and preparation of the dataset Civil Rights Data 2013-14, there will also be some visuals provided to summarize the data.
+html link: file:///C:/Users/jerus/Documents/R/Portfolio/deliverable1.html
 
 ### 2. Model Planning and Building
 

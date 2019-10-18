@@ -1,0 +1,98 @@
+
+
+I am going to first download some tools to clean the data and then download the dataset which in this case is going to include national civil rights data. I was interested in looking into this dataset in order to observe any possible effects on student performance from some tracked attributes. I discovered the dataset using the "data.gov" link and the set is provided by "ed.gov," which means the dataset was procured by the department of education. Because of the dataset's origin, I expect the information to be legitimate, however, the set is quite broad and includes very specific attributes with very little entries for them. Because of this, a good amount of cleaning is going to be needed in order to find the more filled out and/or interesting attributes worth observing. The data is also a little limited due to its age as the 2013-2014 year was the most recent iteration of this data. 
+```{r}
+install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+library("readr")
+library("tidyverse")
+CRD <- read_csv("C:/Users/jerus/Desktop/CRDC2013_14_SCH.csv")
+```
+
+The dataset has a lot of columns, many of which are practically empty or lack enough entries to draw any significant information from. So to start I am going to minimize the dataset and include columns that may provide the most insight in observation. I'm also going to simplify the names from the original for legibility. This will be called the "clean_crd" for clean civil rights data. Here's a list of the data variables in the "clean_crd" dataset
+"state": state location of the school
+"district_name": name of school district
+"school_name": name of school
+"gifted_talented_education_programs": a check for whether or not the school includes gifted education programs; has value of either "yes" or "no"
+
+All enrollment variables are seperated by race and gender and include:
+"hispanic_male_enrollment
+hispanic_female_enrollment
+american_alaskan_native_male_enrollment
+american_alaskan_native_female_enrollment
+asian_male_enrollment
+asian_female_enrollment
+native_hawaiian_pacific_islander_male_enrollment
+native_hawaiian_pcific_islander_female_enrollment
+black_male_enrollment
+black_female_enrollment
+white_male_enrollment
+white_female_enrollment
+multiple_race_male_enrollment
+multiple_race_female_enrollment
+total_male_enrollment
+total_female_enrollment"
+
+"local_state_salary_expenditure": yearly state and local salary expenditures for the school
+"chronic_male_absenteeism": tracks number of chronically absent students organized by males
+"chronic_female_absenteeism":tracks number of chronically absent students organized by females
+
+
+
+
+
+```{r}
+
+
+clean_crd <- tibble(state = CRD$LEA_STATE, district_name = CRD$LEA_NAME, school_name = CRD$SCH_NAME, gifted_talented_education_programs = CRD$SCH_GT_IND, hispanic_male_enrollment = CRD$SCH_ENR_HI_M, hispanic_female_enrollment = CRD$SCH_ENR_HI_F, american_alaskan_native_male_enrollment = CRD$SCH_ENR_AM_M, american_alaskan_native_female_enrollment = CRD$SCH_ENR_AM_F, asian_male_enrollment = CRD$SCH_ENR_AS_M, asian_female_enrollment = CRD$SCH_ENR_AS_F, native_hawaiian_pacific_islander_male_enrollment = CRD$SCH_ENR_HP_M, native_hawaiian_pacific_islander_female_enrollment = CRD$SCH_ENR_HP_F, black_male_enrollment = CRD$SCH_ENR_BL_M,   black_female_enrollment = CRD$SCH_ENR_BL_F, white_male_enrollment = CRD$SCH_ENR_WH_M, white_female_enrollment = CRD$SCH_ENR_WH_F, multiple_race_male_enrollment = CRD$SCH_ENR_TR_M, multiple_race_female_enrollment = CRD$SCH_ENR_TR_F, total_male_enrollment = CRD$TOT_ENR_M, total_female_enrollment = CRD$TOT_ENR_F, local_state_salary_expenditure = CRD$SCH_SAL_TOTPERS_WOFED, chronic_male_absenteeism = CRD$TOT_ABSENT_M,chronic_female_absenteeism = CRD$TOT_ABSENT_F)
+
+```
+
+Looking at the data I felt it would be good observe school attributes in relation to other schools, so I've decided to create a School table which would include state, school name, salary expenditure, total male/female enrollment and a category checking if the school has a gifted education program
+
+```{r}
+school_table <- tibble(state = clean_crd$state, district_name = clean_crd$district_name, school_name = clean_crd$school_name, total_male_enrollment = clean_crd$total_male_enrollment, total_female_enrollment = clean_crd$total_female_enrollment, local_state_salary_expenditure = clean_crd$local_state_salary_expenditure, gifted_talented_education_program = clean_crd$gifted_talented_education_programs)
+```
+
+Next I am going to make a table for student enrollment in order to observe any discrepencies in race by school district. This table will include the enrollment totals as well as the enrollment's divided by ethnicity alongside state expenditures and absenteeism.
+
+```{r}
+student_enrollment_table <- tibble(district_name = clean_crd$district_name, hispanic_male = clean_crd$hispanic_male_enrollment, hispanic_female = clean_crd$hispanic_female_enrollment, american_alaskan_native_male = clean_crd$american_alaskan_native_male_enrollment, american_alaskan_native_female = clean_crd$american_alaskan_native_female_enrollment, native_hawaiian_pacific_islander_male = clean_crd$native_hawaiian_pacific_islander_male_enrollment, native_hawaiian_pacific_islander_female = clean_crd$native_hawaiian_pacific_islander_female_enrollment, asian_male = clean_crd$asian_male_enrollment, asian_female = clean_crd$asian_female_enrollment, black_male = clean_crd$black_male_enrollment, black_female = clean_crd$black_female_enrollment, white_male = clean_crd$white_male_enrollment, white_female = clean_crd$white_female_enrollment, multiple_race_male = clean_crd$multiple_race_male_enrollment, multiple_race_female = clean_crd$multiple_race_female_enrollment, total_male = clean_crd$total_male_enrollment, total_female = clean_crd$total_female_enrollment)
+```
+
+Lastly, I'm going to make a gifted_education_table which will include the state and district, the presence of a gifted education program, salary expenditure, and also a listing of male and female chronic absenteeism. I am making this table because I would like to observe any possible effects of gifted education programs on absenteeism as well as the programs effects on salary expenditure
+```{r}
+gifted_education_table <- tibble(state = clean_crd$state, district_name = clean_crd$district_name, gifted_talented_education_program = clean_crd$gifted_talented_education_programs, chronic_male_absenteeism = clean_crd$chronic_male_absenteeism, chronic_female_absenteeism = clean_crd$chronic_female_absenteeism, local_state_salary_expenditure = clean_crd$local_state_salary_expenditure)
+```
+
+Now I am going to make some visualizations, starting by making sure I have ggplot2 available
+```{r}
+library(ggplot2)
+```
+
+One observation I wanted to make was any relation between salary expenditures and chronic absenteeism, so the first visual will be a scatter plot with chronic absenteeism at "y axis" and the expenditure at "x axis". There will be both a male graph and female graph
+```{r}
+ggplot(clean_crd, aes(x = local_state_salary_expenditure, y = chronic_male_absenteeism)) + geom_point()
+ggplot(clean_crd, aes(x = local_state_salary_expenditure, y = chronic_female_absenteeism)) + geom_point()
+```
+
+The next graph is going to be the number of schools in each state, count on "y" axis and state name in "x" axis, the graph is clear when hitting the "open in new window button", I'm still trying to figure out how to make the state names legible in the first output.
+```{r}
+ f <- ggplot(school_table, aes(state))
+f + geom_bar()
+```
+
+This graph organizes each state in the "x" axis alongside its yearly salary expenditures in the "y" axis
+```{r}
+g <- ggplot(school_table, aes(state, local_state_salary_expenditure))
+g + geom_col()
+```
+
+The next two graphs are going to categorize chronic male/female absenteeism(y axis) by state(x axis)
+```{r}
+h <- ggplot(gifted_education_table, aes(state, chronic_male_absenteeism))
+h + geom_col()
+i <-  ggplot(gifted_education_table, aes(state, chronic_female_absenteeism))
+i + geom_col()
+```
+
+I'm hoping that by delving deeper into the stats presented, I may be able to gather information on the effectiveness of education programs on chronic absenteeism as well as the financial effect that these programs play in the yearly salary expenditures for schools.
