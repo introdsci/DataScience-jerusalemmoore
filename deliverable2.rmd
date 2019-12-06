@@ -1,0 +1,50 @@
+---
+title: "deliverable2"
+author: "Jerusalem Moore"
+date: "11/27/2019"
+output: html_document
+---
+
+The predictions I would like to model from the initial data would be exactly how much chroni absenteeism and more generally student performance is effected by different factors. I feel these predictions matter because they can provide an outlook on whether or not these factors play any positive or negative roles in student class participation and success.
+
+Note:You need tidyverse, readr, and readxl installed for the following code to run
+
+
+```{r}
+library("readr")
+library("tidyverse")
+library("readxl")
+suspension_data <- read_delim("suspension_data.txt", "\t", escape_double = FALSE, trim_ws = TRUE)
+chronic_absenteeism <- read_delim("C:/Users/jerus/Downloads/chrabs1718 (1).txt", "\t", escape_double = FALSE, trim_ws = TRUE)
+free_reduced_meals <- read_excel("free_reduced_meals.xlsx", sheet = "FRPM School-Level Data ", skip = 1)
+
+
+```
+
+I'm going to minimize the three datasets into smaller tables, starting with an absenteeism table from the chronic absenteeism dataset
+
+Notes for absenteeism table...
+
+I'm going to include enrollment numbers, charter school indicators, and absenteeism rates/counts to monitor student performance and behavior
+
+non obvious variables:
+scope:indicator for whether entry is an observation by school(S), state(T), district(D), or county(C) level
+charter_school:indicator for whether entry is a charter school
+
+```{r}
+absenteeism_table <- tibble(year = chronic_absenteeism$AcademicYear, scope = chronic_absenteeism$AggregateLevel, county_code = chronic_absenteeism$CountyCode, county_name = chronic_absenteeism$CountyName, charter_school = chronic_absenteeism$CharterYN, total_enrollment = chronic_absenteeism$CumulativeEnrollment, absenteeism_count = chronic_absenteeism$ChronicAbsenteeismCount, absenteeism_rate = chronic_absenteeism$ChronicAbsenteeismRate)
+```
+
+Next I'm going to make a suspension table from the suspension dataset in order to supplement abesenteeism which I believe will add some depth to student performance and behavior
+
+```{r}
+suspension_table <- tibble(year = suspension_data$AcademicYear, scope = suspension_data$AggregateLevel, county_code = suspension_data$CountyCode, county_name = suspension_data$CountyName, charter_school = suspension_data$CharterYN, total_enrollment = suspension_data$`Cumulative Enrollment`, total_suspensions = suspension_data$`Total Suspensions`, suspension_rate = suspension_data$`Suspension Rate (Total)`)
+
+```
+
+Lastly I'm going to create a table from the free_reduced_meals dataset in order to see if the percent of students eligible for free food and educational option type have any relation to school performance and behavior
+```{r}
+names(free_reduced_meals)[10] <- "educational_option_type"
+names(free_reduced_meals)[20] <- "percent_free_food_eligible"
+free_meals_table <- tibble(year = free_reduced_meals$`Academic Year`, county_code = free_reduced_meals$`County Code`, county_name = free_reduced_meals$`County Name`, education_type = free_reduced_meals$educational_option_type, percent_free_food_eligible = free_reduced_meals$percent_free_food_eligible)
+```
